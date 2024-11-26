@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Haram\\Downloads\\Code\\repos\\Chess\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{4409753B-B1E1-457A-BCAF-81300A38D9C8}|Chess\\Chess.vcxproj|C:\\Users\\Haram\\Downloads\\Code\\repos\\Chess\\Chess\\gamestate.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4409753B-B1E1-457A-BCAF-81300A38D9C8}|Chess\\Chess.vcxproj|solutionrelative:Chess\\gamestate.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4409753B-B1E1-457A-BCAF-81300A38D9C8}|Chess\\Chess.vcxproj|C:\\Users\\Haram\\Downloads\\Code\\repos\\Chess\\Chess\\gamestate.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4409753B-B1E1-457A-BCAF-81300A38D9C8}|Chess\\Chess.vcxproj|solutionrelative:Chess\\gamestate.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4409753B-B1E1-457A-BCAF-81300A38D9C8}|Chess\\Chess.vcxproj|C:\\Users\\Haram\\Downloads\\Code\\repos\\Chess\\Chess\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4409753B-B1E1-457A-BCAF-81300A38D9C8}|Chess\\Chess.vcxproj|solutionrelative:Chess\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "main.cpp",
+              "DocumentMoniker": "C:\\Users\\Haram\\Downloads\\Code\\repos\\Chess\\Chess\\main.cpp",
+              "RelativeDocumentMoniker": "Chess\\main.cpp",
+              "ToolTip": "C:\\Users\\Haram\\Downloads\\Code\\repos\\Chess\\Chess\\main.cpp",
+              "RelativeToolTip": "Chess\\main.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-25T21:49:54.803Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "gamestate.hpp",
+              "DocumentMoniker": "C:\\Users\\Haram\\Downloads\\Code\\repos\\Chess\\Chess\\gamestate.hpp",
+              "RelativeDocumentMoniker": "Chess\\gamestate.hpp",
+              "ToolTip": "C:\\Users\\Haram\\Downloads\\Code\\repos\\Chess\\Chess\\gamestate.hpp",
+              "RelativeToolTip": "Chess\\gamestate.hpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-26T01:45:58.186Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "gamestate.cpp",
+              "DocumentMoniker": "C:\\Users\\Haram\\Downloads\\Code\\repos\\Chess\\Chess\\gamestate.cpp",
+              "RelativeDocumentMoniker": "Chess\\gamestate.cpp",
+              "ToolTip": "C:\\Users\\Haram\\Downloads\\Code\\repos\\Chess\\Chess\\gamestate.cpp",
+              "RelativeToolTip": "Chess\\gamestate.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-25T22:08:45.11Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
