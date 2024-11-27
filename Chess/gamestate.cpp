@@ -8,28 +8,28 @@
 
 GameState::GameState() {
     this->whiteMove = true;
-    window = new sf::RenderWindow(sf::VideoMode(WINDOW_SIZE, WINDOW_SIZE), "SFML works!", sf::Style::Titlebar);
+    window = new sf::RenderWindow(sf::VideoMode(WINDOW_SIZE, WINDOW_SIZE), "SFML works!", sf::Style::Close);
     window->setTitle("meow");
 
-    initSquares();
+    initDrawables();
 }
 
 GameState::GameState(bool whiteMove, char board[ROW_LENGTH][COL_LENGTH]) {
     this->whiteMove = whiteMove;
     memcpy(this->board, board, 64);
-    window = new sf::RenderWindow(sf::VideoMode(WINDOW_SIZE, WINDOW_SIZE), "SFML works!", sf::Style::Titlebar);
+    window = new sf::RenderWindow(sf::VideoMode(WINDOW_SIZE, WINDOW_SIZE), "SFML works!", sf::Style::Close);
 
-    initSquares();
+    initDrawables();
 }
 
 GameState::~GameState() {
     delete this->window;
 }
 
-void GameState::initSquares() {
+void GameState::initDrawables() {
 
-    if (!font.loadFromFile("./Assets/arial.ttf")) {
-        printf("error\n");
+    if (!font.loadFromFile("./assets/arial.ttf")) {
+        printf("error loading font\n");
     }
 
     const char numToAlpha[ROW_LENGTH] = {
@@ -55,6 +55,23 @@ void GameState::initSquares() {
             squares[i][j].setFillColor(ind % 2 ? sf::Color::Green : sf::Color::White);
         }
     }
+
+    for (int i = 1; i < UNIQUE_PIECES * 2 + 1; i++) {
+        pieces.pieceInd[i] = new sf::Image();
+    }
+
+    pieces.WP->loadFromFile("./assets/Chess_plt60.png");
+    pieces.BP->loadFromFile("./assets/Chess_pdt60.png");
+    pieces.WB->loadFromFile("./assets/Chess_blt60.png");
+    pieces.BB->loadFromFile("./assets/Chess_bdt60.png");
+    pieces.WN->loadFromFile("./assets/Chess_nlt60.png");
+    pieces.BN->loadFromFile("./assets/Chess_ndt60.png");
+    pieces.WR->loadFromFile("./assets/Chess_rlt60.png");
+    pieces.BR->loadFromFile("./assets/Chess_rdt60.png");
+    pieces.WQ->loadFromFile("./assets/Chess_qlt60.png");
+    pieces.BQ->loadFromFile("./assets/Chess_qdt60.png");
+    pieces.WK->loadFromFile("./assets/Chess_qlt60.png");
+    pieces.BK->loadFromFile("./assets/Chess_qdt60.png");
 }
 
 void GameState::drawBoard() {
@@ -63,6 +80,15 @@ void GameState::drawBoard() {
         window->draw(labels[i + ROW_LENGTH]);
         for (int j = 0; j < COL_LENGTH; j++) {
             window->draw(squares[i][j]);
+            if (board[i][j] == E) continue;
+            sf::Image* curImg = pieces.pieceInd[board[i][j]];
+            //window->draw(*curImg);
+            //curImg->(sf::Vector2f(100.f * i + LABELS_SIZE, 100.f * j));
         }
     }
+}
+
+Coords GameState::getSquare(sf::Event::MouseButtonEvent event) {
+    if (event.x < 50 || event.x > 850 || event.y < 0 || event.y > 800) return Coords(-1, -1);
+    return Coords((int)((event.x - 50) / 100), (int)(event.y / 100));
 }
