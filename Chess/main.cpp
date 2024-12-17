@@ -3,7 +3,7 @@
 #include "gamestate.hpp"
 
 
-Coords currentMover(-1, -1);
+Coords currentMover(-1, -1), destSquare(-1, -1);
 
 int main(int argc, char* argv[]) {
 	GameState game;
@@ -30,6 +30,7 @@ int main(int argc, char* argv[]) {
 					std::cout << " to ";
 					destSquare.printCoords();
 					std::cout << std::endl;
+					game.makeMove(currentMover, destSquare);
 				}
 			}
 		}

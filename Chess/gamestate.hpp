@@ -10,6 +10,7 @@
 #define GRAY 0xDC
 #define FONT_SIZE 24
 #define UNIQUE_PIECES 6
+#define IMAGE_SCALE_MULTIPLIER 1.6667
 
 const char numToAlpha[ROW_LENGTH] = {
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'
@@ -54,23 +55,23 @@ struct Coords {
 };
 
 struct Pieces {
-    sf::Image *WP;
-    sf::Image *BP;
-    sf::Image *WB;
-    sf::Image *BB;
-    sf::Image *WN;
-    sf::Image *BN;
-    sf::Image *WR;
-    sf::Image *BR;
-    sf::Image *WQ;
-    sf::Image *BQ;
-    sf::Image *WK;
-    sf::Image *BK;
+    sf::Sprite *WP;
+    sf::Sprite *BP;
+    sf::Sprite *WB;
+    sf::Sprite *BB;
+    sf::Sprite *WN;
+    sf::Sprite *BN;
+    sf::Sprite *WR;
+    sf::Sprite *BR;
+    sf::Sprite *WQ;
+    sf::Sprite *BQ;
+    sf::Sprite *WK;
+    sf::Sprite *BK;
 
-    sf::Image* pieceInd[UNIQUE_PIECES*2+1] = { NULL, WP, BP, WB, BB, WN, BN, WR, BR, WQ, BQ, WK, BK};
+    sf::Sprite* pieceInd[UNIQUE_PIECES*2] = { WP, BP, WB, BB, WN, BN, WR, BR, WQ, BQ, WK, BK};
 
     ~Pieces() {
-        for (int i = 1; i < UNIQUE_PIECES * 2 + 1; i++) {
+        for (int i = 0; i < UNIQUE_PIECES * 2; i++) {
             delete pieceInd[i];
         }
     }
@@ -83,26 +84,33 @@ class GameState {
         GameState(bool whiteMove, char board[ROW_LENGTH][COL_LENGTH]);
         ~GameState();
         uint8_t board[8][8] = {
-            {BR, BK, BB, BQ, BK, BB, BN, BR},
+            {BR, BN, BB, BQ, BK, BB, BN, BR},
             {BP, BP, BP, BP, BP, BP, BP, BP},
             {E, E, E, E, E, E, E, E},
             {E, E, E, E, E, E, E, E},
             {E, E, E, E, E, E, E, E},
             {E, E, E, E, E, E, E, E},
-            {WR, WK, WB, WQ, WK, WB, WN, WR},
             {WP, WP, WP, WP, WP, WP, WP, WP},
-
+            {WR, WN, WB, WQ, WK, WB, WN, WR},
         };
         bool whiteMove;
         void drawBoard();
+        void makeMove(Coords from, Coords to);
         static Coords getSquare(sf::Event::MouseButtonEvent event);
-
         sf::RenderWindow* window;
+
+    private:
+        void initDrawables();
+        bool isLegalMove(Coords from, Coords to);
+        bool isRookMove(Coords from, Coords to);
+        bool isBishopMove(Coords from, Coords to);
+        bool isKnightMove(Coords from, Coords to);
+        bool isPawnMove(Coords from, Coords to);
+        bool isSelfCapture(Coords from, Coords to);
         sf::RectangleShape squares[ROW_LENGTH][COL_LENGTH];
         Pieces pieces;
         sf::Text labels[ROW_LENGTH + COL_LENGTH];
         sf::Font font;
-
-    private:
-        void initDrawables();
+        sf::Texture textures[2 * UNIQUE_PIECES];
+        sf::Sprite sprites[ROW_LENGTH][COL_LENGTH];
 };

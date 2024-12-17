@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <cmath>
 
 
 
@@ -42,8 +43,8 @@ void GameState::initDrawables() {
         labels[i + ROW_LENGTH].setFont(font);
         labels[i].setCharacterSize(FONT_SIZE);
         labels[i + ROW_LENGTH].setCharacterSize(FONT_SIZE);
-        labels[i].setString(sf::String(numToAlpha[i]));
-        labels[i + ROW_LENGTH].setString(sf::String((char)(i + 1 + '0')));
+        labels[i].setString(sf::String((char)(COL_LENGTH - i + '0')));
+        labels[i + ROW_LENGTH].setString(sf::String(numToAlpha[COL_LENGTH-i-1]));
         labels[i].setPosition(sf::Vector2f(25.f - FONT_SIZE/2, i * 100 + 50 - FONT_SIZE/2));
         labels[i + ROW_LENGTH].setPosition(sf::Vector2f(i * 100 + 50 + LABELS_SIZE - FONT_SIZE/2, WINDOW_SIZE - 25 - FONT_SIZE/2));
         labels[i].setFillColor(sf::Color::Black);
@@ -51,27 +52,34 @@ void GameState::initDrawables() {
         for (int j = 0; j < COL_LENGTH; j++) {
             int ind = i + j;
             squares[i][j].setSize(sf::Vector2f(100.f, 100.f));
-            squares[i][j].setPosition(sf::Vector2f(100.f * i+LABELS_SIZE, 100.f * j));
+            squares[i][j].setPosition(sf::Vector2f(100.f * j + LABELS_SIZE, 100.f * i));
             squares[i][j].setFillColor(ind % 2 ? sf::Color::Green : sf::Color::White);
         }
     }
 
-    for (int i = 1; i < UNIQUE_PIECES * 2 + 1; i++) {
-        pieces.pieceInd[i] = new sf::Image();
+    for (int i = 0; i < UNIQUE_PIECES * 2; i++) {
+        pieces.pieceInd[i] = new sf::Sprite();
     }
 
-    pieces.WP->loadFromFile("./assets/Chess_plt60.png");
-    pieces.BP->loadFromFile("./assets/Chess_pdt60.png");
-    pieces.WB->loadFromFile("./assets/Chess_blt60.png");
-    pieces.BB->loadFromFile("./assets/Chess_bdt60.png");
-    pieces.WN->loadFromFile("./assets/Chess_nlt60.png");
-    pieces.BN->loadFromFile("./assets/Chess_ndt60.png");
-    pieces.WR->loadFromFile("./assets/Chess_rlt60.png");
-    pieces.BR->loadFromFile("./assets/Chess_rdt60.png");
-    pieces.WQ->loadFromFile("./assets/Chess_qlt60.png");
-    pieces.BQ->loadFromFile("./assets/Chess_qdt60.png");
-    pieces.WK->loadFromFile("./assets/Chess_qlt60.png");
-    pieces.BK->loadFromFile("./assets/Chess_qdt60.png");
+
+    textures[0].loadFromFile("./assets/Chess_plt60.png", sf::IntRect(100, 100, 0, 0));
+    textures[1].loadFromFile("./assets/Chess_pdt60.png", sf::IntRect(100, 100, 0, 0));
+    textures[2].loadFromFile("./assets/Chess_blt60.png", sf::IntRect(100, 100, 0, 0));
+    textures[3].loadFromFile("./assets/Chess_bdt60.png", sf::IntRect(100, 100, 0, 0));
+    textures[4].loadFromFile("./assets/Chess_nlt60.png", sf::IntRect(100, 100, 0, 0));
+    textures[5].loadFromFile("./assets/Chess_ndt60.png", sf::IntRect(100, 100, 0, 0));
+    textures[6].loadFromFile("./assets/Chess_rlt60.png", sf::IntRect(100, 100, 0, 0));
+    textures[7].loadFromFile("./assets/Chess_rdt60.png", sf::IntRect(100, 100, 0, 0));
+    textures[8].loadFromFile("./assets/Chess_qlt60.png", sf::IntRect(100, 100, 0, 0));
+    textures[9].loadFromFile("./assets/Chess_qdt60.png", sf::IntRect(100, 100, 0, 0));
+    textures[10].loadFromFile("./assets/Chess_klt60.png", sf::IntRect(100, 100, 0, 0));
+    textures[11].loadFromFile("./assets/Chess_kdt60.png", sf::IntRect(100, 100, 0, 0));
+
+    for (int i = 0; i < UNIQUE_PIECES * 2; i++) {
+        pieces.pieceInd[i]->setTexture(textures[i]);
+        pieces.pieceInd[i]->setScale(IMAGE_SCALE_MULTIPLIER, IMAGE_SCALE_MULTIPLIER);
+    }
+
 }
 
 void GameState::drawBoard() {
@@ -80,10 +88,15 @@ void GameState::drawBoard() {
         window->draw(labels[i + ROW_LENGTH]);
         for (int j = 0; j < COL_LENGTH; j++) {
             window->draw(squares[i][j]);
-            if (board[i][j] == E) continue;
-            sf::Image* curImg = pieces.pieceInd[board[i][j]];
-            //window->draw(*curImg);
-            //curImg->(sf::Vector2f(100.f * i + LABELS_SIZE, 100.f * j));
+            if (board[i][j] != E) {
+                sf::Sprite* curImg = pieces.pieceInd[board[i][j] - 1];
+                memcpy(&sprites[i][j], curImg, sizeof(sf::Sprite));
+            }
+            else {
+                sprites[i][j] = sf::Sprite();
+            }
+            sprites[i][j].setPosition(sf::Vector2f(100.f * j + LABELS_SIZE, 100.f * i));
+            window->draw(sprites[i][j]);
         }
     }
 }
@@ -91,4 +104,110 @@ void GameState::drawBoard() {
 Coords GameState::getSquare(sf::Event::MouseButtonEvent event) {
     if (event.x < 50 || event.x > 850 || event.y < 0 || event.y > 800) return Coords(-1, -1);
     return Coords((int)((event.x - 50) / 100), (int)(event.y / 100));
+}
+
+void GameState::makeMove(Coords from, Coords to) {
+    int movingPiece = board[from.y][from.x];
+    if (!isLegalMove(from, to) || (movingPiece && (movingPiece % 2 == 1) ^ whiteMove)) return;
+    board[to.y][to.x] = board[from.y][from.x];
+    board[from.y][from.x] = E;
+    whiteMove = !whiteMove;
+}
+
+bool GameState::isLegalMove(Coords from, Coords to) {
+    if (isSelfCapture(from, to)) return false;
+    switch (board[from.y][from.x]) {
+        case (E):
+            return false;
+        case (WK):
+        case (BK):
+            return (abs(from.x - to.x) <= 1 && abs(from.y - to.y) <= 1);
+        case (WQ):
+        case (BQ):
+            return isRookMove(from, to) || isBishopMove(from, to);
+        case (WR):
+        case (BR):
+            return isRookMove(from, to);
+        case (WB):
+        case (BB):
+            return isBishopMove(from, to);
+        case (WN):
+        case (BN):
+            return isKnightMove(from, to);
+        case (WP):
+        case (BP):
+            return isPawnMove(from, to);
+        
+    }
+
+    return true;
+}
+
+bool GameState::isRookMove(Coords from, Coords to) {
+    if (from.x == to.x) {
+        for (int i = from.y + (from.y > to.y ? -1 : 1); i != to.y; from.y > to.y ? i-- : i++) {
+            if (board[i][from.x] != E) return false;
+        }
+        return true;
+    }
+    if (from.y == to.y) {
+        for (int i = from.x + (from.x > to.x ? -1 : 1); i != to.x; from.x > to.x ? i-- : i++) {
+            if (board[from.y][i] != E) return false;
+        }
+        return true;
+    }
+
+
+    return false;
+}
+
+bool GameState::isBishopMove(Coords from, Coords to) {
+    if ((abs(from.x - to.x) != abs(from.y - to.y))) return false;
+    int dirs[4][2] = { {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };
+    int dir[2];
+    memcpy(dir, (to.x > from.x) && (to.y > from.y) ? dirs[0] :
+        (to.x > from.x) && (to.y < from.y) ? dirs[1] :
+        (to.x < from.x) && (to.y > from.y) ? dirs[2] : 
+        (to.x < from.x) && (to.y < from.y) ? dirs[3] : dirs[0], 2*sizeof(int));
+    int curX = from.x;
+    int curY = from.y;
+    curX += dir[0];
+    curY += dir[1];
+    while (curX != to.x) {
+        if (curX > COL_LENGTH || curY > ROW_LENGTH) return false;
+        if (board[curY][curX] != E) return false;
+        curX += dir[0];
+        curY += dir[1];
+    }
+    return true;
+}
+
+bool GameState::isKnightMove(Coords from, Coords to) {
+    return (abs(from.x - to.x) == 2 && abs(from.y - to.y) == 1) || (abs(from.x - to.x) == 1 && abs(from.y - to.y) == 2);
+}
+bool GameState::isPawnMove(Coords from, Coords to) {
+    int fromPiece = board[from.y][from.x];
+    int destPiece = board[to.y][to.x];
+    if (fromPiece == WP) {
+        if (from.y - 1 == to.y) {
+            if (from.x == to.x && destPiece == E) return true;
+            if (abs(from.x - to.x) == 1 && destPiece && destPiece % 2 == 0) return true;
+        } 
+        else if (from.y - 2 == to.y) {
+            if (from.y == 6 && from.x == to.x) return true;
+        }
+    }
+    else if (fromPiece == BP) {
+        if (from.y + 1 == to.y) {
+            if (from.x == to.x && destPiece == E) return true;
+            if (abs(from.x - to.x) == 1 && destPiece % 2 == 1) return true;
+        }
+        else if (from.y + 2 == to.y) {
+            if (from.y == 1 && from.x == to.x) return true;
+        }
+    }
+    return false;
+}
+bool GameState::isSelfCapture(Coords from, Coords to) {
+    return board[to.y][to.x] != E && board[from.y][from.x] % 2 == board[to.y][to.x] % 2;
 }
