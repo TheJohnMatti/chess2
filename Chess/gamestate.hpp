@@ -11,6 +11,8 @@
 #define FONT_SIZE 24
 #define UNIQUE_PIECES 6
 #define IMAGE_SCALE_MULTIPLIER 1.6667
+#define KINGSIDE_CASTLE 1
+#define QUEENSIDE_CASTLE 2
 
 const char numToAlpha[ROW_LENGTH] = {
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'
@@ -34,6 +36,15 @@ enum Square{
     BQ,
     WK,
     BK
+};
+
+enum MoveType {
+    KINGMOVE = 1,
+    PAWNMOVE,
+    ROOKMOVE,
+    BISHOPMOVE,
+    KNIGHTMOVE,
+    QUEENMOVE,
 };
 
 struct Coords {
@@ -101,12 +112,16 @@ class GameState {
 
     private:
         void initDrawables();
-        bool isLegalMove(Coords from, Coords to);
+        int isLegalMove(Coords from, Coords to);
         bool isRookMove(Coords from, Coords to);
         bool isBishopMove(Coords from, Coords to);
         bool isKnightMove(Coords from, Coords to);
         bool isPawnMove(Coords from, Coords to);
         bool isSelfCapture(Coords from, Coords to);
+        bool isPawnPromotion(Coords from, Coords to);
+        bool isCastle(Coords from, Coords to);
+        int whiteCastlingRights;
+        int blackCastlingRights;
         sf::RectangleShape squares[ROW_LENGTH][COL_LENGTH];
         Pieces pieces;
         sf::Text labels[ROW_LENGTH + COL_LENGTH];

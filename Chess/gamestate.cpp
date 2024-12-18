@@ -9,8 +9,10 @@
 
 GameState::GameState() {
     this->whiteMove = true;
+    this->whiteCastlingRights = KINGSIDE_CASTLE | QUEENSIDE_CASTLE;
+    this->blackCastlingRights = KINGSIDE_CASTLE | QUEENSIDE_CASTLE;
     window = new sf::RenderWindow(sf::VideoMode(WINDOW_SIZE, WINDOW_SIZE), "SFML works!", sf::Style::Close);
-    window->setTitle("meow");
+    window->setTitle("Chess Engine");
 
     initDrawables();
 }
@@ -102,41 +104,50 @@ void GameState::drawBoard() {
 }
 
 Coords GameState::getSquare(sf::Event::MouseButtonEvent event) {
-    if (event.x < 50 || event.x > 850 || event.y < 0 || event.y > 800) return Coords(-1, -1);
+    if (event.x < LABELS_SIZE || event.x > WINDOW_SIZE || event.y < 0 || event.y > WINDOW_SIZE-LABELS_SIZE) return Coords(-1, -1);
     return Coords((int)((event.x - 50) / 100), (int)(event.y / 100));
 }
 
 void GameState::makeMove(Coords from, Coords to) {
     int movingPiece = board[from.y][from.x];
-    if (!isLegalMove(from, to) || (movingPiece && (movingPiece % 2 == 1) ^ whiteMove)) return;
+    /*if (isCastle(from, to)) {
+
+    }*/
+    int moveType = this->isLegalMove(from, to);
+    if (!moveType || (movingPiece && (movingPiece % 2 == 1) ^ whiteMove)) return;
     board[to.y][to.x] = board[from.y][from.x];
     board[from.y][from.x] = E;
+    printf("%d - %d\n", moveType, isPawnPromotion(from, to));
+    if (moveType == PAWNMOVE && isPawnPromotion(from, to)) {
+        printf("PAWN PROMOTION\n");
+        board[to.y][to.x] = movingPiece % 2 ? WQ : BQ;
+    }
     whiteMove = !whiteMove;
 }
 
-bool GameState::isLegalMove(Coords from, Coords to) {
+int GameState::isLegalMove(Coords from, Coords to) {
     if (isSelfCapture(from, to)) return false;
     switch (board[from.y][from.x]) {
         case (E):
             return false;
         case (WK):
         case (BK):
-            return (abs(from.x - to.x) <= 1 && abs(from.y - to.y) <= 1);
+            return (abs(from.x - to.x) <= 1 && abs(from.y - to.y) <= 1)*KINGMOVE;
         case (WQ):
         case (BQ):
-            return isRookMove(from, to) || isBishopMove(from, to);
+            return (isRookMove(from, to) || isBishopMove(from, to))*QUEENMOVE;
         case (WR):
         case (BR):
-            return isRookMove(from, to);
+            return isRookMove(from, to)*ROOKMOVE;
         case (WB):
         case (BB):
-            return isBishopMove(from, to);
+            return isBishopMove(from, to)*BISHOPMOVE;
         case (WN):
         case (BN):
-            return isKnightMove(from, to);
+            return isKnightMove(from, to)*KNIGHTMOVE;
         case (WP):
         case (BP):
-            return isPawnMove(from, to);
+            return isPawnMove(from, to)*PAWNMOVE;
         
     }
 
@@ -210,4 +221,10 @@ bool GameState::isPawnMove(Coords from, Coords to) {
 }
 bool GameState::isSelfCapture(Coords from, Coords to) {
     return board[to.y][to.x] != E && board[from.y][from.x] % 2 == board[to.y][to.x] % 2;
+}
+
+bool GameState::isPawnPromotion(Coords from, Coords to) {
+    if (board[to.y][to.x] && board[to.y][to.x] % 2 == 0 && to.y == COL_LENGTH - 1) return true;
+    if (board[to.y][to.x] % 2 && to.y == 0) return true;
+    return false;
 }

@@ -16,20 +16,14 @@ int main(int argc, char* argv[]) {
 			if (event.type == sf::Event::MouseButtonPressed) {
 				currentMover = game.getSquare(event.mouseButton);
 				if (currentMover.y == -1) continue;
-				std::cout << currentMover.x << '\t' << currentMover.y << std::endl;
 			}
 
 			if (event.type == sf::Event::MouseButtonReleased) {
 				Coords destSquare = game.getSquare(event.mouseButton);
 				if (destSquare == currentMover) {
-					std::cout << "Cancel Move" << std::endl;
+
 				}
 				else {
-					std::cout << "Move from ";
-					currentMover.printCoords();
-					std::cout << " to ";
-					destSquare.printCoords();
-					std::cout << std::endl;
 					game.makeMove(currentMover, destSquare);
 				}
 			}
